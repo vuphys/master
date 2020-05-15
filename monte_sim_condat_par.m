@@ -29,6 +29,9 @@
 % There are two random parameters in this simulation which are
 % lambda_1(alpha 1) and lambda_2(alpha 0)
 
+% This is an old version without random noise
+
+
 function monte_sim_condat_par(N)
 %% Preallocate:
 H=zeros(N,9);   % preallocate storage for all value

@@ -2,6 +2,8 @@
 % There are three random parameter in the simulation which is alpha 0,
 % alpha 1 and lambda
 
+% This is an old version without random noise
+
 function monte_sim_uc_par(N)
 
 %% Preallocate:

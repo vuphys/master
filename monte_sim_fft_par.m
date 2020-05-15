@@ -2,6 +2,7 @@
 % There are two random parameters in this simulation which is alpha(alpha
 % 1) and beta(alpha 0)
  
+% This is an old version without random noise
 
 function monte_sim_fft_par(N)
 %% Preallocate:

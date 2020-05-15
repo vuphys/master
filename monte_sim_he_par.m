@@ -3,6 +3,8 @@
 % 3 main parameters which is alpha 0, alpha 1, and beta
 % For a full understanding of paramters please find more information in "he_tgv.m"
 
+% This is an old version without random noise
+
 function monte_sim_he_par(N)
 
 %blur kernel definition
