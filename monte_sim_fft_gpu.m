@@ -4,6 +4,8 @@
 % M is the number of generated noise image
 % N is the number of MC step
 
+% Not complete yet
+
 function monte_sim_fft_gpu(M,N)
 %% Preallocate:
 H=zeros(N,9,'gpuArray');   % preallocate storage for all value

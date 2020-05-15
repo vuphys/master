@@ -1,6 +1,7 @@
 % This code show a demo run for a set of parameters 
 % based on FFT TGV code
 
+% Can't run yet
 function fft_demo_gpu(a,b,c,d)
 tic
 % ADMM parameters
