@@ -102,7 +102,7 @@ format long;
         psnr_tgv = psnr(denoise_img,GroTru);
         
         %Niqe
-        niqe_score=ESSIM(noise_img,denoise_img);
+        niqe_score=niqe(denoise_img);
         
         %Piqe
         piqe_score=piqe(denoise_img);
