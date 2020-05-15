@@ -3,7 +3,7 @@
 
 function uc_demo
 
-	maxIterations= 10000;	% number of iterations
+	maxIterations= 1000;	% number of iterations
     checkIterations= 100;   % check step
 	alpha0 = 0.008298; 	% regularization parameter
 	alpha1 = 0.000093; % regularization parameter
