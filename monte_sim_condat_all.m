@@ -50,7 +50,7 @@ R=zeros(N,1);   % preallocate storage for Piqe
 denoise=cell(N,1); % create cell array for denoise images storage
 
 result=struct();   % create struct for all results storage
-
+image=struct(); %create struct for all images storage
 %% TGV parameters:
 Nbiter= 600;	% number of iterations
 %lambda1 = 0.1; 	% regularization parameter
@@ -86,7 +86,7 @@ for k=1:M
 
 noise_img = imnoise(GroTru,'gaussian',m,std);   % adding Gaussian noise
 
-result.I(k).n_img=noise_img; %store created noise image to struct
+image.I(k).n_img=noise_img; %store created noise image to struct
 	
 %% Monte Carlo simulation:
 
@@ -156,13 +156,16 @@ format long;
     H(:,9)=R; %Piqe
          
     result.I(k).factor=H;
-    result.I(k).den_img=denoise; %save cell array to result struct
+    image.I(k).den_img=denoise; %save cell array to image struct
 
     ans5=sprintf('finish update H, continue to next noise level')
 end
 toc
-    savefile=sprintf('DATA/condat_%d_%d_all.mat',M,N); % create file name
+    savefile=sprintf('DATA/condat_%d_%d_all.mat',M,N) % create file name
     save(savefile,'result'); % save struct result to file
+    
+    saveimage=sprintf('DATA/condat_%d_%d_img.mat',M,N)
+    save(saveimage,'image');
     
     ans6=sprintf('finish Condate code')
     
