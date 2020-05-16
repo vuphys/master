@@ -145,7 +145,37 @@ format long;
     ans4=sprintf('finish update H, continue to next noise level')
 end    
 toc
-%% Save data:
+
+ %% Create a data .txt file for later statistical process
+allPar=zeros(M*N,9); % matrix store all random parameter and results
+                     % of all image
+h=0;
+for i=1:M           % paste all random parameters of noise and TGV to allPar
+    for j=1:N
+        allPar(1+h:N+h,1)=i;
+        allPar(1+h:N+h,2)=result.I(i).seed;
+        allPar(1+h:N+h,3)=result.I(i).mean;
+        allPar(1+h:N+h,4)=result.I(i).std;
+        allPar(1+h:N+h,5)=result.I(i).factor(:,1); %alpha1
+        allPar(1+h:N+h,6)=result.I(i).factor(:,2); %alpha0
+        allPar(1+h:N+h,7)=result.I(i).factor(:,9); %lambda
+        allPar(1+h:N+h,8)=result.I(i).factor(:,3); %SSIM
+        allPar(1+h:N+h,9)=result.I(i).factor(:,4); %PSNR
+        h=i*N;
+        if h==M*N
+            break;
+        end
+    end
+end
+% Give index name for data:
+    tabPar=array2table(allPar,'VariableNames',{'img','seed'...
+        ,'mean','std','alpha_1','alpha_0','lambda','PNSR','SSIM'});
+    
+    txtfile=sprintf('DATA/datUc_%d_%d.txt',M,N)
+    writetable(tabPar,txtfile,'Delimiter','tab');
+
+%% Save data as matlab type     
+
     savefile=sprintf('DATA/uc_%d_%d_par.mat',M,N) % create file name
     save(savefile,'result'); % save struct result to file only store parameters
     

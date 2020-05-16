@@ -36,6 +36,7 @@
 
 function  monte_sim_condat_all(M,N)
 %% Preallocate:
+
 H=zeros(N,9);   % preallocate storage for all value
 T=zeros(N,1);   % preallocate storage for lambda_1
 V=zeros(N,1);   % preallocate storage for lambda_2
@@ -154,13 +155,49 @@ format long;
     H(:,7)=Y; %Brisque
     H(:,8)=Z; %Niqe
     H(:,9)=R; %Piqe
-         
+    
+    %writematrix(H,'DATA/datCondat.txt','Delimiter','tab');
     result.I(k).factor=H;
     image.I(k).den_img=denoise; %save cell array to image struct
 
     ans5=sprintf('finish update H, continue to next noise level')
 end
 toc
+
+%% Create a data .txt file for later statistical process
+allPar=zeros(M*N,8); % cell array store all random parameter and results
+                     % of all image
+                    
+%index={'img','seed','mean','std','alpha_1','alpha_0','SSIM','PSNR'};
+%i=1:8;
+%allPar{1,i}=index(i);
+h=0;
+
+
+for i=1:M           % paste all random parameters of noise and TGV to allPar
+    for j=1:N
+        allPar(1+h:N+h,1)=i;
+        allPar(1+h:N+h,2)=result.I(i).seed;
+        allPar(1+h:N+h,3)=result.I(i).mean;
+        allPar(1+h:N+h,4)=result.I(i).std;
+        allPar(1+h:N+h,5)=result.I(i).factor(:,1); %lambda1(alpha1)
+        allPar(1+h:N+h,6)=result.I(i).factor(:,2); %lambda2(alpha0)
+        allPar(1+h:N+h,7)=result.I(i).factor(:,3); %SSIM
+        allPar(1+h:N+h,8)=result.I(i).factor(:,4); %PSNR
+        h=i*N;
+        if h==M*N
+            break;
+        end
+    end
+end
+
+    tabPar=array2table(allPar,'VariableNames',{'img','seed'...
+        ,'mean','std','alpha_1','alpha_0','PNSR','SSIM'});
+    txtfile=sprintf('DATA/datCondat_%d_%d.txt',M,N)
+    writetable(tabPar,txtfile);
+ 
+
+%% Save data as matlab type
     savefile=sprintf('DATA/condat_%d_%d_par.mat',M,N) % create file name
     save(savefile,'result'); % save struct result to file only store parameters
     
