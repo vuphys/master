@@ -43,24 +43,24 @@ for k=1:M
     ans1=sprintf('FFT code create noise image %d/%d',k,M)
     
     rng(k,'twister')
-    s=rand(1,1);
+    s=round(rand(1,1),8);
     t=s+k; %for reproducibility of the noise image
     rng(t,'twister')
-    std=rand(1,1)*2; % create random standard deviation for Gaussian noise
+    std=round(rand(1,1)*2,8); % create random standard deviation for Gaussian noise
                      % from [0,2]
-    m=2.*rand(1,1)-1;   % create random mean for Gaussian noise
+    m=round(2.*rand(1,1)-1,8);   % create random mean for Gaussian noise
                         % from [-1,1]
     ans2=sprintf('seed: %.3f, mean: %.3f, standard deviation: %.3f',t,m,std)
     
     
-    result.I(k).seed=s;     % store seed to struct
+    result.I(k).seed=t;     % store seed to struct
     result.I(k).mean=m;     % store mean to struct
     result.I(k).std=std;    % store standard deviation to struct
     
+    rng(t)
+    noise_img = imnoise(GroTru,'gaussian',m,std);   % adding Gaussian noise
 
-noise_img = imnoise(GroTru,'gaussian',m,std);   % adding Gaussian noise
-
-image.I(k).n_img=noise_img; %store created noise image to struct
+    image.I(k).n_img=noise_img; %store created noise image to struct
 	
 
 %% Monte Carlo simulation:
@@ -146,8 +146,8 @@ end
 
     toc
           
-    savefile=sprintf('DATA/fft_%d_%d_all.mat',M,N) %create file name
-    save(savefile,'result'); % save struct result to file
+    savefile=sprintf('DATA/fft_%d_%d_par.mat',M,N) %create file name
+    save(savefile,'result'); % save struct result to file only store parameters
     
     saveimage=sprintf('DATA/fft_%d_%d_img.mat',M,N)
     save(saveimage,'image');
