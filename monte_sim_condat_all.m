@@ -35,6 +35,8 @@
 % N is the number of MC step
 
 function  monte_sim_condat_all(M,N)
+
+tic
 %% Preallocate:
 
 H=zeros(N,9);   % preallocate storage for all value
@@ -63,7 +65,7 @@ tau = 0.01;		% proximal parameter >0; influences the
 ffcdata=load('GroundTruth');        %load Ground Truth data
 GroTru=ffcdata.data(:,:,1,1);       %load a Ground Truth image
 
-tic    
+
 %% Adding noise
 for k=1:M
     
@@ -190,11 +192,14 @@ for i=1:M           % paste all random parameters of noise and TGV to allPar
         end
     end
 end
-
+    
+     % Give index name for data:
     tabPar=array2table(allPar,'VariableNames',{'img','seed'...
-        ,'mean','std','alpha_1','alpha_0','PNSR','SSIM'});
+        ,'mean','std','alpha_1','alpha_0','SSIM','PSNR'});
+    
+    % Save data as .txt   
     txtfile=sprintf('DATA/datCondat_%d_%d.txt',M,N)
-    writetable(tabPar,txtfile);
+    writetable(tabPar,txtfile,'Delimiter','tab');
  
 
 %% Save data as matlab type
@@ -205,5 +210,5 @@ end
     save(saveimage,'image');
     
     ans6=sprintf('finish Condate code')
-    
+ toc   
 end

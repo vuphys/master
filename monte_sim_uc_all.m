@@ -9,6 +9,7 @@
 
 function monte_sim_uc_all(M,N)
 
+tic
 %% Preallocate:
 H=zeros(N,10);   % preallocate storage for all value
 T=zeros(N,1);   % preallocate storage for alpha_1
@@ -144,7 +145,6 @@ format long;
 
     ans4=sprintf('finish update H, continue to next noise level')
 end    
-toc
 
  %% Create a data .txt file for later statistical process
 allPar=zeros(M*N,9); % matrix store all random parameter and results
@@ -167,10 +167,11 @@ for i=1:M           % paste all random parameters of noise and TGV to allPar
         end
     end
 end
-% Give index name for data:
+    % Give index name for data:
     tabPar=array2table(allPar,'VariableNames',{'img','seed'...
-        ,'mean','std','alpha_1','alpha_0','lambda','PNSR','SSIM'});
+        ,'mean','std','alpha_1','alpha_0','lambda','SSIM','PSNR'});
     
+    % Save data as .txt   
     txtfile=sprintf('DATA/datUc_%d_%d.txt',M,N)
     writetable(tabPar,txtfile,'Delimiter','tab');
 
@@ -183,6 +184,8 @@ end
     save(saveimage,'image');
     
     ans5=sprintf('finish UC code')
+    
+ toc   
 end
 
     

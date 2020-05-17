@@ -10,6 +10,7 @@
 
 function monte_sim_he_all(M,N)
 
+tic
 %blur kernel definition
 K     =   fspecial('average',1); %for denoising
 
@@ -62,7 +63,7 @@ tao  = -BSNR*tao0+1.09; %for deblurring
 end
 c    =  tao*m*n*OrgSigma.^2; % upper bound for the constraint
 
-tic
+
 
 for k=1:M
     
@@ -187,7 +188,6 @@ format long;
 
 end
 
-toc
  %% Create a data .txt file for later statistical process
 allPar=zeros(M*N,9); % matrix store all random parameter and results
                      % of all image
@@ -211,11 +211,11 @@ for i=1:M           % paste all random parameters of noise and TGV to allPar
 end
     % Give index name for data:
     tabPar=array2table(allPar,'VariableNames',{'img','seed'...
-        ,'mean','std','alpha_1','alpha_0','beta','PNSR','SSIM'});
+        ,'mean','std','alpha_1','alpha_0','beta','SSIM','PSNR'});
    
-    % Save data to file:
+    % Save data as .txt   
     txtfile=sprintf('DATA/datHe_%d_%d.txt',M,N)
-    writetable(tabPar,txtfile);
+    writetable(tabPar,txtfile,'Delimiter','tab');
 
 %% Save data as matlab type      
                
@@ -226,4 +226,6 @@ end
     save(saveimage,'image');
     
     ans6=sprintf('finish He code')
+    
+ toc   
 end

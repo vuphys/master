@@ -6,6 +6,8 @@
 % N is the number of MC step
 
 function monte_sim_fft_all(M,N)
+
+tic
 %% Preallocate:
 H=zeros(N,9);   % preallocate storage for all value
 T=zeros(N,1);   % preallocate storage for alpha
@@ -35,7 +37,7 @@ nite = 100; % number of iterations
 ffcdata=load('GroundTruth');        %load Ground Truth data
 GroTru=ffcdata.data(:,:,1,1);       %load a Ground Truth image
 
-tic
+
 %% Adding noise
 
 for k=1:M
@@ -144,7 +146,7 @@ format long;
     ans5=sprintf('finish update H, continue to next noise level')
 end
 
-    toc
+   
     
     %% Create a data .txt file for later statistical process
 allPar=zeros(M*N,8); % matrix store all random parameter and results
@@ -169,11 +171,11 @@ end
 
     % Give index name for data:
     tabPar=array2table(allPar,'VariableNames',{'img','seed'...
-        ,'mean','std','alpha_1','alpha_0','PNSR','SSIM'});
+        ,'mean','std','alpha_1','alpha_0','SSIM','PSNR'});
       
-    % Save data to file:
+    % Save data as .txt   
     txtfile=sprintf('DATA/datFft_%d_%d.txt',M,N)
-    writetable(tabPar,txtfile);
+    writetable(tabPar,txtfile,'Delimiter','tab');
 
 %% Save data as matlab type          
     savefile=sprintf('DATA/fft_%d_%d_par.mat',M,N) %create file name
@@ -183,7 +185,7 @@ end
     save(saveimage,'image');
     
     ans6=sprintf('finish FFT code')
-    
+toc    
 end
 
 
