@@ -6,7 +6,7 @@ library(readr)
 
 # LOAD DATA ################################################
 
-my_data <- read.table("DATA/datCondat_10_10.txt", header=T,sep=",")
+my_data <- read.table("DATA/datUc_10_100.txt", header=T,sep="\t")
 
 
 my_data
@@ -19,16 +19,16 @@ hist(my_data$img)
 hist(my_data$mean)
 
 # Basic X-Y plot for two quantitative variables
-plot(my_data$alpha_1, my_data$alpha_0)
+with(my_data[my_data$img==1,], plot(my_data$lambda, my_data$PSNR))
 
 # Add some options
-plot(my_data$alpha_0, my_data$PSNR,
-     pch = 19,         # Solid circle
-     cex = 1.5,        # Make 150% size
+with(my_data[my_data$img==1,].plot(my_data$alpha_1, my_data$PSNR,
+     pch = 1,         # Solid circle
+     cex = 1,        # Make 150% size
      col = "#cc0000",  # Red
      main = "\alpha_0 vs PSNR",
      xlab = "\alpha_0 value",
-     ylab = "PSNR")
+     ylab = "PSNR"))
 
 plot(my_data)
 # CLEAN UP #################################################
