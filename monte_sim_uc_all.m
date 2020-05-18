@@ -95,11 +95,11 @@ format long;
         [mssim, ssim_map] = ssim(denoise_img, GroTru);
         [mulmssim,mulssim_map]=multissim(denoise_img,GroTru);
         
-        %MSE
-        err = immse(denoise_img, GroTru);
+        %PSNR HVS
+        psnr_hvs = psnrhvsm(denoise_img, GroTru);
         
-        %Brisque
-        score_brisque = brisque(denoise_img);
+        %PSNR HMA
+        psnr_hma = psnrhma(denoise_img,GroTru);
 
         %PSNR
         psnr_tgv = psnr(denoise_img,GroTru);
@@ -107,17 +107,17 @@ format long;
         %Niqe
         niqe_score=niqe(denoise_img);
         
-        %Piqe
-        piqe_score=piqe(denoise_img);
+        %FSIM
+        fsim=FeatureSIM(GroTru,denoise_img);
         
         % Store MSSIM and PSNR:
         U(i)=mssim;
         P(i)=psnr_tgv;
         Q(i)=mulmssim;
-        X(i)=err;
-        Y(i)=score_brisque;
-        Z(i)=niqe_score;
-        R(i)=piqe_score;
+        X(i)=psnr_hvs;
+        Y(i)=psnr_hma;
+        Z(i)=niqe_score
+        R(i)=fsim;
         %count=count+1;
 
         % Dsiplaying results
@@ -134,11 +134,11 @@ format long;
     H(:,3)=U; %MSSIM
     H(:,4)=P; %PSNR
     H(:,5)=Q; %MS SSIM
-    H(:,6)=X; %MSE
-    H(:,7)=Y; %Brisque
-    H(:,8)=Z; %Niqe
-    H(:,9)=V1; %lambda
-    H(:,10)=R; %Piqe
+    H(:,6)=X; %PSNR HVS
+    H(:,7)=Y; %PSNR HMA
+    H(:,8)=Z; %niqe
+    H(:,9)=V1; %beta
+    H(:,10)=R;  %FSIM
 
     result.I(k).factor=H;
     image.I(k).den_img=denoise; %save cell array to image struct
@@ -147,7 +147,7 @@ format long;
 end    
 
  %% Create a data .txt file for later statistical process
-allPar=zeros(M*N,9); % matrix store all random parameter and results
+allPar=zeros(M*N,13); % matrix store all random parameter and results
                      % of all image
 h=0;
 for i=1:M           % paste all random parameters of noise and TGV to allPar
@@ -161,6 +161,10 @@ for i=1:M           % paste all random parameters of noise and TGV to allPar
         allPar(1+h:N+h,7)=result.I(i).factor(:,9); %lambda
         allPar(1+h:N+h,8)=result.I(i).factor(:,3); %SSIM
         allPar(1+h:N+h,9)=result.I(i).factor(:,4); %PSNR
+        allPar(1+h:N+h,10)=result.I(i).factor(:,5); %MS SSIM
+        allPar(1+h:N+h,11)=result.I(i).factor(:,6); %PSNR HVS
+        allPar(1+h:N+h,12)=result.I(i).factor(:,7); %PSNR HMA
+        allPar(1+h:N+h,13)=result.I(i).factor(:,10); %FSIM
         h=i*N;
         if h==M*N
             break;
@@ -169,7 +173,8 @@ for i=1:M           % paste all random parameters of noise and TGV to allPar
 end
     % Give index name for data:
     tabPar=array2table(allPar,'VariableNames',{'img','seed'...
-        ,'mean','std','alpha_1','alpha_0','lambda','SSIM','PSNR'});
+        ,'mean','std','alpha_1','alpha_0','lambda','SSIM','PSNR',...
+        'MS_SSIM','PSNR_HVS','PSNR_HMA','FSIM'});
     
     % Save data as .txt   
     txtfile=sprintf('DATA/datUc_%d_%d.txt',M,N)
@@ -181,7 +186,7 @@ end
     save(savefile,'result'); % save struct result to file only store parameters
     
     saveimage=sprintf('DATA/uc_%d_%d_img.mat',M,N)
-    save(saveimage,'image');
+    save(saveimage,'image','-v7.3');
     
     ans5=sprintf('finish UC code')
     
