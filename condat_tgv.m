@@ -1,3 +1,32 @@
+% Denoising/smoothing a given image y with the second order 
+% total generalized variation (TGV), defined in 
+% K. Bredies, K. Kunisch, and T. Pock, "Total generalized variation,"
+% SIAM J. Imaging Sci., 3(3), 492-526, 2010.
+%
+% The iterative algorithm converges to the unique image x 
+% (and the auxiliary vector field r) minimizing 
+%
+% ||x-y||_2^2/2 + lambda1.||r||_1,2 + lambda2.||J(Dx-r)||_1,Frobenius
+%
+% where D maps an image to its gradient field and J maps a vector 
+% field to its Jacobian. For a large value of lambda2, the TGV 
+% behaves like the TV. For a small value, it behaves like the 
+% l1-Frobenius norm of the Hessian.
+%		
+% The over-relaxed Chambolle-Pock algorithm is described in
+% L. Condat, "A primal-dual splitting method for convex optimization 
+% involving Lipschitzian, proximable and linear composite terms", 
+% J. Optimization Theory and Applications, vol. 158, no. 2, 
+% pp. 460-479, 2013.
+%
+% Code written by Laurent Condat, CNRS research fellow in the
+% Dept. of Images and Signals of GIPSA-lab, Univ. Grenoble Alpes, 
+% Grenoble, France.
+%
+% Version 1.0, Oct. 12, 2016
+
+
+
 function x = condat_tgv(y,lambda1,lambda2,tau,Nbiter)
 
 	rho = 1.99;		% relaxation parameter, in [1,2)

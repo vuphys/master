@@ -30,7 +30,7 @@
 
 function condat_demo
 tic
-	Nbiter= 5000;	% number of iterations
+	Nbiter= 1000;	% number of iterations
 	lambda1 = 0.102021; 	% regularization parameter
 	lambda2 = 4.512587;	% regularization parameter
   
@@ -45,7 +45,7 @@ tic
 	
     % Adding noise
     rng(0); %reproducibility
-	noise_img = GroTru+randn(size(GroTru))*0.1; % white Gaussian noise added to the image
+    noise_img = imnoise(GroTru,'gaussian',0,0.01);
 	
     %call TGV
 	denoise_img = condat_tgv(noise_img,lambda1,lambda2,tau,Nbiter);
