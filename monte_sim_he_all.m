@@ -26,11 +26,13 @@ V=zeros(N,1);   % preallocate storage for alpha_0
 U=zeros(N,1);   % preallocate storage for SSIM
 P=zeros(N,1);   % preallocate storage for PSNR
 Q=zeros(N,1);   % preallocate storage for MS SSIM
-X=zeros(N,1);   % preallocate storage for MSE
-Y=zeros(N,1);   % preallocate storage for Brisque
-Z=zeros(N,1);   % preallocate storage for niqe
+X=zeros(N,1);   % preallocate storage for PSNR HVS
+Y=zeros(N,1);   % preallocate storage for PSNR HMA
+Z=zeros(N,1);   % preallocate storage for VIF
 V1=zeros(N,1);  % preallocate storage for beta
-R=zeros(N,1);   %preallocate storage for piqe
+R=zeros(N,1);   %preallocate storage for FSIM
+A=zeros(1,7);   % preallocate storage for noise image metric score
+
 
 denoise=cell(N,1); % create cell array for denoise images storage
 
@@ -88,6 +90,16 @@ for k=1:M
 noise_img = imnoise(GroTru,'gaussian',m,std);   % adding Gaussian noise
 
 image.I(k).n_img=noise_img; %store created noise image to struct
+
+    A(1,1) = ssim(noise_img, GroTru); %SSIM
+    A(1,2) = psnr(noise_img,GroTru); %PSNR
+    A(1,3) = multissim(noise_img,GroTru); %Multi SSIM
+    A(1,4) = psnrhvsm(noise_img, GroTru); %PSNR HVSM
+    A(1,5) = psnrhma(noise_img,GroTru); %PSNR HMA
+    A(1,6) = vif(GroTru,noise_img); %VIF
+    A(1,7) = FeatureSIM(GroTru,noise_img); %FSIM
+    
+    result.I(k).noise_met=A;
 	
 %% Monte Carlo simulation:
 
@@ -149,8 +161,8 @@ format long;
         %PSNR
         psnr_tgv = psnr(denoise_img,GroTru);
         
-        %Niqe
-        niqe_score=niqe(denoise_img);
+        %VIF
+        vif_val=vif(GroTru,denoise_img);
         
         %FSIM
         fsim=FeatureSIM(GroTru,denoise_img);
@@ -161,7 +173,7 @@ format long;
         Q(i)=mulmssim;
         X(i)=psnr_hvs;
         Y(i)=psnr_hma;
-        Z(i)=niqe_score
+        Z(i)=vif_val
         R(i)=fsim;
         %count=count+1;
 
@@ -177,7 +189,7 @@ format long;
     H(:,5)=Q; %MS SSIM
     H(:,6)=X; %PSNR HVS
     H(:,7)=Y; %PSNR HMA
-    H(:,8)=Z; %niqe
+    H(:,8)=Z; %VIF
     H(:,9)=V1; %beta
     H(:,10)=R;  %FSIM
       
@@ -189,7 +201,7 @@ format long;
 end
 
  %% Create a data .txt file for later statistical process
-allPar=zeros(M*N,13); % matrix store all random parameter and results
+allPar=zeros(M*N,14); % matrix store all random parameter and results
                      % of all image
 h=0;
 for i=1:M           % paste all random parameters of noise and TGV to allPar
@@ -206,7 +218,8 @@ for i=1:M           % paste all random parameters of noise and TGV to allPar
         allPar(1+h:N+h,10)=result.I(i).factor(:,5); %MS SSIM
         allPar(1+h:N+h,11)=result.I(i).factor(:,6); %PSNR HVS
         allPar(1+h:N+h,12)=result.I(i).factor(:,7); %PSNR HMA
-        allPar(1+h:N+h,13)=result.I(i).factor(:,10); %FSIM
+        allPar(1+h:N+h,13)=result.I(i).factor(:,8); %VIF
+        allPar(1+h:N+h,14)=result.I(i).factor(:,10); %FSIM
         h=i*N;
         if h==M*N
             break;
@@ -216,7 +229,7 @@ end
     % Give index name for data:
     tabPar=array2table(allPar,'VariableNames',{'img','seed'...
         ,'mean','std','alpha_1','alpha_0','beta','SSIM','PSNR',...
-        'MS_SSIM','PSNR_HVS','PSNR_HMA','FSIM'});
+        'MS_SSIM','PSNR_HVS','PSNR_HMA','VIF','FSIM'});
    
     % Save data as .txt   
     txtfile=sprintf('DATA/datHe_%d_%d.txt',M,N)
