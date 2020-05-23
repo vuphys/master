@@ -11,7 +11,7 @@ function monte_sim_uc_all(M,N)
 
 tic
 %% Preallocate:
-H=zeros(N,10);   % preallocate storage for all value
+H=zeros(N,10);  % preallocate storage for denoise image metric scores and parameters
 T=zeros(N,1);   % preallocate storage for alpha_1
 V=zeros(N,1);   % preallocate storage for alpha_0
 U=zeros(N,1);   % preallocate storage for SSIM
@@ -69,6 +69,7 @@ for k=1:M
 	
     image.I(k).n_img=noise_img; %store created noise image to struct
     
+    % Store metric scores of noise image:
     A(1,1) = ssim(noise_img, GroTru); %SSIM
     A(1,2) = psnr(noise_img,GroTru); %PSNR
     A(1,3) = multissim(noise_img,GroTru); %Multi SSIM

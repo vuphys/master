@@ -9,7 +9,7 @@ function monte_sim_fft_all(M,N)
 
 tic
 %% Preallocate:
-H=zeros(N,9);   % preallocate storage for all value
+H=zeros(N,9);   % preallocate storage for denoise image metric scores and parameters
 T=zeros(N,1);   % preallocate storage for alpha
 V=zeros(N,1);   % preallocate storage for beta
 U=zeros(N,1);   % preallocate storage for SSIM
@@ -26,7 +26,7 @@ result=struct();  % create struct for all results storage
 image=struct(); %create struct for all images storage
 
 %% ADMM parameters
-nite = 100; % number of iterations
+nite = 1000; % number of iterations
 % balancing weights for Total Variation
 % alpha = 0.09;  % 1st order
 % beta = 0.11; % 2nd order
@@ -63,7 +63,9 @@ for k=1:M
     noise_img = imnoise(GroTru,'gaussian',m,std);   % adding Gaussian noise
 
     image.I(k).n_img=noise_img; %store created noise image to struct
-	
+
+    % Store metric scores of noise image:
+
     A(1,1) = ssim(noise_img, GroTru); %SSIM
     A(1,2) = psnr(noise_img,GroTru); %PSNR
     A(1,3) = multissim(noise_img,GroTru); %Multi SSIM
