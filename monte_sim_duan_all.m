@@ -177,15 +177,15 @@ end
         'MS_SSIM','PSNR_HVS','PSNR_HMA','VIF','FSIM'});
     
     % Save data as .txt   
-    txtfile=sprintf('DATA/datUc_%d_%d.txt',M,N)
+    txtfile=sprintf('DATA/datDuan_%d_%d.txt',M,N)
     writetable(tabPar,txtfile,'Delimiter','tab');
 
 %% Save data as matlab type     
 
-    savefile=sprintf('DATA/uc_%d_%d_par.mat',M,N) % create file name
+    savefile=sprintf('DATA/duan_%d_%d_par.mat',M,N) % create file name
     save(savefile,'result'); % save struct result to file only store parameters
     
-    saveimage=sprintf('DATA/uc_%d_%d_img.mat',M,N)
+    saveimage=sprintf('DATA/duan_%d_%d_img.mat',M,N)
     save(saveimage,'image','-v7.3');
     
     ans5=sprintf('finish Duan code')
