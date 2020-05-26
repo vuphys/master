@@ -83,8 +83,11 @@ for k=1:M
 
 %count=0;
 format long;
+
+checkval=A(1,1);
+
      parfor i=1:N % parallel computating
-        
+        notice=sprintf('still running')
         % Random seed:
         rng(i,'twister') %for different seed in different stream
         alpha1=rand(1,1)/100;
@@ -94,17 +97,15 @@ format long;
         while(lambda==0) %To make sure lambda is not zero
         lambda=rand(1,1)/10;
         end
-        
-        % Store parameters
-        T(i)=alpha1;
-        V(i)=alpha0;
-        V1(i)=lambda;
-        
+                     
         %Call TGV:
         denoise_img = uc_tgv(noise_img, lambda, alpha0, alpha1, maxIterations, checkIterations);	
         
-        %SSIM
+        %SSIM:
         [mssim, ssim_map] = ssim(denoise_img, GroTru);
+                  
+                
+        %Multi SSIM:
         [mulmssim,mulssim_map]=multissim(denoise_img,GroTru);
         
         %PSNR HVS
@@ -122,7 +123,10 @@ format long;
         %FSIM
         fsim=FeatureSIM(GroTru,denoise_img);
         
-        % Store MSSIM and PSNR:
+         % Store parameters
+        T(i)=alpha1;
+        V(i)=alpha0;
+        V1(i)=lambda;
         U(i)=mssim;
         P(i)=psnr_tgv;
         Q(i)=mulmssim;
@@ -199,7 +203,7 @@ end
     save(savefile,'result'); % save struct result to file only store parameters
     
     saveimage=sprintf('DATA/uc_%d_%d_img.mat',M,N)
-    save(saveimage,'image','-v7.3');
+    save(saveimage,'image','-v7.3'); %save all image in a seperate data
     
     ans5=sprintf('finish UC code')
     

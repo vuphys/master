@@ -26,7 +26,7 @@ result=struct();  % create struct for all results storage
 image=struct(); %create struct for all images storage
 
 %% ADMM parameters
-nite = 1000; % number of iterations
+nite = 100; % number of iterations
 % balancing weights for Total Variation
 % alpha = 0.09;  % 1st order
 % beta = 0.11; % 2nd order
@@ -83,32 +83,27 @@ for k=1:M
 format long;
 
      parfor i=1:N   % parallel computing
-         
-        ans3=sprintf('step %d/%d',i,N)
         
-        % Random seed:
+        ans3=sprintf('step %d/%d',i,N)
+         
+        %check_mssim=checkval;
+                               
+        %Random seed:
         rng(i,'twister') %for different seed in different stream
         alpha=rand(1,1);
         beta=rand(1,1);
-       
-        % Store parameters
-        T(i)=alpha;
-        V(i)=beta;
-        
+                  
         %Call TGV:
         denoise_img=calltgv(GroTru,noise_img,alpha,beta,nite);        
-        %for c = 1:size(GroTru,3)
-        %denoise_img(:,:,c) = fft_tgv( noise_img(:,:,c), alpha, beta, nite );
-        %end
-        
+               
         %SSIM
-        [mssim, ssim_map] = ssim(denoise_img, GroTru);
-        
+        [mssim, ~] = ssim(denoise_img, GroTru);
+                                    
         %Multi Scale SSIM
-        [mulmssim,mulssim_map]=multissim(denoise_img,GroTru);
+        [mulmssim,~]=multissim(denoise_img,GroTru);
         
         %PSNR HVS
-        psnr_hvs = psnrhvsm(denoise_img, GroTru);
+        psnr_hvsm = psnrhvsm(denoise_img, GroTru);
         
         %PSNR HMA
         psnr_hma = psnrhma(denoise_img,GroTru);
@@ -122,11 +117,14 @@ format long;
         %FSIM
         fsim=FeatureSIM(GroTru,denoise_img);
         
-        % Store MSSIM and PSNR:
+                
+         % Store parameters
+        T(i)=alpha;
+        V(i)=beta;
         U(i)=mssim;
         P(i)=psnr_tgv;
         Q(i)=mulmssim;
-        X(i)=psnr_hvs;
+        X(i)=psnr_hvsm;
         Y(i)=psnr_hma;
         Z(i)=vif_val;
         R(i)=fsim;
@@ -196,16 +194,15 @@ end
     writetable(tabPar,txtfile,'Delimiter','tab');
 
 %% Save data as matlab type          
-    savefile=sprintf('DATA/fft_%d_%d_par.mat',M,N) %create file name
+    savefile=sprintf('DATA/fft_%d_%d_par.mat',M,N) %create parameter file name
     save(savefile,'result'); % save struct result to file only store parameters
     
-    saveimage=sprintf('DATA/fft_%d_%d_img.mat',M,N)
-    save(saveimage,'image','-v7.3');
+    saveimage=sprintf('DATA/fft_%d_%d_img.mat',M,N) %create image file name
+    save(saveimage,'image','-v7.3'); %save all image in a seperate data
     
     ans6=sprintf('finish FFT code')
 toc    
 end
-
 
 
 %% call TGV function for parallel computing

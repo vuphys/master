@@ -108,7 +108,7 @@ image.I(k).n_img=noise_img; %store created noise image to struct
 %count=0;
 format long;
 
- 
+
         parfor i=1:N  % parallel computing
             
 
@@ -132,11 +132,7 @@ format long;
         Param.Beta=rand(1,1)*5;
         end
         
-        % Store random parameters
-        T(i)=Param.alpha1;
-        V(i)=Param.alpha0;
-        V1(i)=Param.Beta;
-        
+               
         % Call TGV:
         output = he_tgv(noise_img, K, Param); %% main program
         
@@ -150,6 +146,12 @@ format long;
         
         %SSIM
         [mssim, ssim_map] = ssim(denoise_img,GroTru);
+        
+                
+        output = he_tgv(noise_img, K, Param); %% main program
+        denoise_img     = output.Sol;        
+        [mssim, ssim_map] = ssim(denoise_img, GroTru);
+        end
         
         %MS SSIM
         [mulmssim,mulssim_map]=multissim(denoise_img,GroTru);
@@ -169,7 +171,10 @@ format long;
         %FSIM
         fsim=FeatureSIM(GroTru,denoise_img);
         
-        % Store MSSIM and PSNR:
+        % Store random parameters
+        T(i)=Param.alpha1;
+        V(i)=Param.alpha0;
+        V1(i)=Param.Beta;
         U(i)=mssim;
         P(i)=psnr_tgv;
         Q(i)=mulmssim;
@@ -243,7 +248,7 @@ end
     save(savefile,'result');        % save struct result to file only store parameters
     
     saveimage=sprintf('DATA/he_%d_%d_img.mat',M,N)
-    save(saveimage,'image','-v7.3');
+    save(saveimage,'image','-v7.3');%save all image in a seperate data
     
     ans6=sprintf('finish He code')
     

@@ -228,7 +228,7 @@ end
     save(savefile,'result'); % save struct result to file only store parameters
     
     saveimage=sprintf('DATA/condat_%d_%d_img.mat',M,N)
-    save(saveimage,'image','-v7.3');
+    save(saveimage,'image','-v7.3'); %save all image in a seperate data
     
     ans6=sprintf('finish Condate code')
  toc   
