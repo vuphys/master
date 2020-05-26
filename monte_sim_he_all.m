@@ -147,12 +147,8 @@ format long;
         %SSIM
         [mssim, ssim_map] = ssim(denoise_img,GroTru);
         
-                
-        output = he_tgv(noise_img, K, Param); %% main program
-        denoise_img     = output.Sol;        
-        [mssim, ssim_map] = ssim(denoise_img, GroTru);
-        end
-        
+             
+             
         %MS SSIM
         [mulmssim,mulssim_map]=multissim(denoise_img,GroTru);
         
