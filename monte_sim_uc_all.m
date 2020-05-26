@@ -84,7 +84,7 @@ for k=1:M
 %count=0;
 format long;
 
-checkval=A(1,1);
+
 
      parfor i=1:N % parallel computating
         notice=sprintf('still running')
