@@ -2,7 +2,7 @@ function monte_sim_duan_all(M,N)
 
 tic
 %% Preallocate:
-H=zeros(N,9);  % preallocate storage for denoise image metric scores and parameters
+H=zeros(N,9);   % preallocate storage for denoise image metric scores and parameters
 T=zeros(N,1);   % preallocate storage for alpha_1
 V=zeros(N,1);   % preallocate storage for alpha_0
 U=zeros(N,1);   % preallocate storage for SSIM
@@ -23,10 +23,6 @@ image=struct(); %create struct for all images storage
 %% TGV parameters
 
 	iter= 100;	% number of iterations
-    %checkIterations= 100;   % step of iteration check
-	%alpha0 = 0.0009;       % regularization parameter
-	%alpha1 = 0.0017;       % regularization parameter
-	%lambda = 0.01;         % fidelity parameter
     theta1=5;
     theta2=5;
     
@@ -186,7 +182,7 @@ end
     save(savefile,'result'); % save struct result to file only store parameters
     
     saveimage=sprintf('DATA/duan_%d_%d_img.mat',M,N)
-    save(saveimage,'image','-v7.3');
+    save(saveimage,'image','-v7.3'); %save all image in a seperate data
     
     ans5=sprintf('finish Duan code')
     

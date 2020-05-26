@@ -4,7 +4,7 @@ function duan_demo
     alpha0=0.3;
     theta1=5;
     theta2=5;
-    iter=1000;
+    iter=100;
 
 	%y  = double(imread('parrot.png'))/255;   % Initial image
 	
@@ -14,7 +14,7 @@ function duan_demo
 	
     % Adding noise
     rng(0); %reproducibility
-	noise_img = GroTru+randn(size(GroTru))*0.1; % white Gaussian noise added to the image
+noise_img = imnoise(GroTru,'gaussian',0,0.01);
 	
     %call TGV
 	denoise_img = duan_tgv(noise_img,alpha1,alpha0,theta1,theta2,iter);

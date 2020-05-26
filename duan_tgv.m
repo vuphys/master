@@ -18,7 +18,7 @@
 function u=duan_tgv(f0,alpha1,alpha0,theta1,theta2,iter)
 
 %f0=imread('castle.bmp');
-f0=f0(:,:,1);
+%f0=f0(:,:,1);
 figure; imagesc(f0); colormap(gray); axis off; axis equal;
 padNum=10;
 f0=padarray(f0,[padNum,padNum],'symmetric');
