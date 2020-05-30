@@ -50,22 +50,20 @@ for k=1:M
     ans1=sprintf('UC code create noise image %d/%d',k,M)
     
     rng(k,'twister')
-    s=round(rand(1,1),8);
+    s=round(unifrnd(0,1),8);
     t=s+k; %for reproducibility of the noise image
     rng(t,'twister')
-    std=round(rand(1,1)*2,8); % create random standard deviation for Gaussian noise
-                     % from [0,2]
-    m=round(2.*rand(1,1)-1,8);   % create random mean for Gaussian noise
-                        % from [-1,1]
-    ans2=sprintf('seed: %.3f, mean: %.3f, standard deviation: %.3f',t,m,std)
+    std=round(unifrnd(0,1),8); % create random standard deviation for Gaussian noise
+                     % from [0,1]
+   
+    ans2=sprintf('seed: %.3f, standard deviation: %.3f',t,std)
     
     
     result.I(k).seed=t;     % store seed to struct
-    result.I(k).mean=m;     % store mean to struct
     result.I(k).std=std;    % store standard deviation to struct
     
     rng(t)
-    noise_img = imnoise(GroTru,'gaussian',m,std);   % adding Gaussian noise
+    noise_img = GroTru+randn(size(GroTru))*std;  % adding Gaussian noise
 	
     image.I(k).n_img=noise_img; %store created noise image to struct
     
@@ -86,16 +84,15 @@ format long;
 
 
 
-     parfor i=1:N % parallel computating
-        notice=sprintf('still running')
+     parfor i=1:N % parallel computing
         % Random seed:
         rng(i,'twister') %for different seed in different stream
-        alpha1=rand(1,1)/100;
-        alpha0=rand(1,1)/100;
+        alpha1=unifrnd(0,1); %should divide for 100
+        alpha0=unifrnd(0,1);    %should divide for 100
         
         lambda=0;
         while(lambda==0) %To make sure lambda is not zero
-        lambda=rand(1,1)/10;
+        lambda=unifrnd(0,1);
         end
                      
         %Call TGV:
@@ -108,7 +105,7 @@ format long;
         %Multi SSIM:
         [mulmssim,mulssim_map]=multissim(denoise_img,GroTru);
         
-        %PSNR HVS
+        %PSNR HVSM
         psnr_hvs = psnrhvsm(denoise_img, GroTru);
         
         %PSNR HMA
@@ -163,25 +160,24 @@ format long;
 end    
 
  %% Create a data .txt file for later statistical process
-allPar=zeros(M*N,14); % matrix store all random parameter and results
+allPar=zeros(M*N,13); % matrix store all random parameter and results
                      % of all image
 h=0;
 for i=1:M           % paste all random parameters of noise and TGV to allPar
     for j=1:N
         allPar(1+h:N+h,1)=i;
         allPar(1+h:N+h,2)=result.I(i).seed;
-        allPar(1+h:N+h,3)=result.I(i).mean;
-        allPar(1+h:N+h,4)=result.I(i).std;
-        allPar(1+h:N+h,5)=result.I(i).factor(:,1); %alpha1
-        allPar(1+h:N+h,6)=result.I(i).factor(:,2); %alpha0
-        allPar(1+h:N+h,7)=result.I(i).factor(:,9); %lambda
-        allPar(1+h:N+h,8)=result.I(i).factor(:,3); %SSIM
-        allPar(1+h:N+h,9)=result.I(i).factor(:,4); %PSNR
-        allPar(1+h:N+h,10)=result.I(i).factor(:,5); %MS SSIM
-        allPar(1+h:N+h,11)=result.I(i).factor(:,6); %PSNR HVS
-        allPar(1+h:N+h,12)=result.I(i).factor(:,7); %PSNR HMA
-        allPar(1+h:N+h,13)=result.I(i).factor(:,8); %VIF
-        allPar(1+h:N+h,14)=result.I(i).factor(:,10); %FSIM
+        allPar(1+h:N+h,3)=result.I(i).std;
+        allPar(1+h:N+h,4)=result.I(i).factor(:,1); %alpha1
+        allPar(1+h:N+h,5)=result.I(i).factor(:,2); %alpha0
+        allPar(1+h:N+h,6)=result.I(i).factor(:,9); %lambda
+        allPar(1+h:N+h,7)=result.I(i).factor(:,3); %SSIM
+        allPar(1+h:N+h,8)=result.I(i).factor(:,4); %PSNR
+        allPar(1+h:N+h,9)=result.I(i).factor(:,5); %MS SSIM
+        allPar(1+h:N+h,10)=result.I(i).factor(:,6); %PSNR HVS
+        allPar(1+h:N+h,11)=result.I(i).factor(:,7); %PSNR HMA
+        allPar(1+h:N+h,12)=result.I(i).factor(:,8); %VIF
+        allPar(1+h:N+h,13)=result.I(i).factor(:,10); %FSIM
         h=i*N;
         if h==M*N
             break;
@@ -190,19 +186,22 @@ for i=1:M           % paste all random parameters of noise and TGV to allPar
 end
     % Give index name for data:
     tabPar=array2table(allPar,'VariableNames',{'img','seed'...
-        ,'mean','std','alpha_1','alpha_0','lambda','SSIM','PSNR',...
+        ,'std','alpha_1','alpha_0','lambda','SSIM','PSNR',...
         'MS_SSIM','PSNR_HVS','PSNR_HMA','VIF','FSIM'});
     
+    % Create an identify name for data file name based on created time
+    datestamp=datetime('now','Format','yyyy-MM-dd''T''HHmmss');
+    
     % Save data as .txt   
-    txtfile=sprintf('DATA/datUc_%d_%d.txt',M,N)
+    txtfile=sprintf('DATA/datUc_%d_%d_%s.txt',M,N,datestamp)
     writetable(tabPar,txtfile,'Delimiter','tab');
 
 %% Save data as matlab type     
 
-    savefile=sprintf('DATA/uc_%d_%d_par.mat',M,N) % create file name
+    savefile=sprintf('DATA/uc_%d_%d_par_%s.mat',M,N,datestamp) % create file name
     save(savefile,'result'); % save struct result to file only store parameters
     
-    saveimage=sprintf('DATA/uc_%d_%d_img.mat',M,N)
+    saveimage=sprintf('DATA/uc_%d_%d_img_%s.mat',M,N,datestamp)
     save(saveimage,'image','-v7.3'); %save all image in a seperate data
     
     ans5=sprintf('finish UC code')
