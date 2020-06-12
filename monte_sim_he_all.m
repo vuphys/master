@@ -73,7 +73,7 @@ for k=1:M
     
     rng(k,'twister')
     s=round(unifrnd(0,1),8);
-    t=s+k; %for reproducibility of the noise image
+    t=s+k+2000; %for reproducibility of the noise image
     rng(t,'twister')
     std=round(unifrnd(0,1),8); % create random standard deviation for Gaussian noise
                      % from [0,1]
@@ -105,7 +105,8 @@ image.I(k).n_img=noise_img; %store created noise image to struct
 
 %count=0;
 format long;
-
+rng('shuffle')
+ Randcheck=rand(N,1)
 
         parfor i=1:N  % parallel computing
             
@@ -122,12 +123,12 @@ format long;
         Param.BSNR       = BSNR; 
         
         % Random seed:
-        rng(i,'twister') %for different seed in different stream
-        Param.alpha1=unifrnd(0,1);
-        Param.alpha0=unifrnd(0,1);
+        rng(i*k +Randcheck(i,1)+200000,'twister') %for different seed in different stream
+        Param.alpha1=unifrnd(0,1)*2;
+        Param.alpha0=unifrnd(0,1)*2;
         
         while(Param.Beta==0) % Make sure Beta is not zero
-        Param.Beta=unifrnd(0,1)*5;
+        Param.Beta=unifrnd(0,1)*2;
         end
         
                

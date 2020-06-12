@@ -36,7 +36,7 @@ nite = 100; % number of iterations
 
 ffcdata=load('GroundTruth');        %load Ground Truth data
 GroTru=ffcdata.data(:,:,1,1);       %load a Ground Truth image
-
+%GroTru = GroTru./(max(abs(GroTru)));
 
 %% Adding noise
 
@@ -46,7 +46,7 @@ for k=1:M
     
     rng(k,'twister')
     s=round(unifrnd(0,1),8);
-    t=s+k; %for reproducibility of the noise image
+    t=s+k+1000; %for reproducibility of the noise image
     rng(t,'twister')
     std=round(unifrnd(0,1),8); % create a uniform distribution random standard deviation for Gaussian noise
                      % from [0,1]
@@ -68,7 +68,7 @@ for k=1:M
     A(1,3) = multissim(noise_img,GroTru); %Multi SSIM
     A(1,4) = psnrhvsm(noise_img, GroTru); %PSNR HVSM
     A(1,5) = psnrhma(noise_img,GroTru); %PSNR HMA
-    A(1,6) = vif(GroTru,noise_img); %VIF
+    A(1,6) = VIF_FR(GroTru,noise_img); %VIF
     A(1,7) = FeatureSIM(GroTru,noise_img); %FSIM
     
     result.I(k).noise_met=A;
@@ -78,16 +78,16 @@ for k=1:M
 
 %count=0;
 format long;
-
+ rng('shuffle')
+ Randcheck=rand(N,1)
      parfor i=1:N   % parallel computing
-        
+       
         ans3=sprintf('step %d/%d',i,N)
-         
-                                  
+                                
         %Random seed:
-        rng(i,'twister') %for different seed in different stream
-        alpha=unifrnd(0,1);
-        beta=unifrnd(0,1);
+        rng(i*k+Randcheck(i,1)+100000,'twister') %for different seed in different stream
+        alpha=unifrnd(0,1)*2;
+        beta=unifrnd(0,1)*2;
                   
         %Call TGV:
         denoise_img=calltgv(GroTru,noise_img,alpha,beta,nite);        
@@ -108,12 +108,12 @@ format long;
         psnr_tgv = psnr(denoise_img,GroTru);
         
         %VIF
-        vif_val=vif(GroTru,denoise_img);
+        vif_val=VIF_FR(GroTru,denoise_img);
         
         %FSIM
         fsim=FeatureSIM(GroTru,denoise_img);
         
-                
+                       
          % Store parameters
         T(i)=alpha;
         V(i)=beta;

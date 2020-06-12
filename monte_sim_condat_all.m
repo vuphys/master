@@ -105,14 +105,15 @@ image.I(k).n_img=noise_img; %store created noise image to struct
 
 %count=0;
 format long;
-
+rng('shuffle')
+ Randcheck=rand(N,1)
      parfor i=1:N % parallel computing
         
 
         % Random seed:
-        rng(i,'twister') %for different seed in different stream
-        lambda1=unifrnd(0,1);
-        lambda2=unifrnd(0,1);
+        rng(i*k +Randcheck(i,1),'twister') %for different seed in different stream
+        lambda1=unifrnd(0,1)*2;
+        lambda2=unifrnd(0,1)*2;
        
         %Call TGV:
         denoise_img = condat_tgv(noise_img,lambda1,lambda2,tau,Nbiter);
