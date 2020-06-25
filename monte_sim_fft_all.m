@@ -78,14 +78,15 @@ for k=1:M
 
 %count=0;
 format long;
- rng('shuffle')
- Randcheck=rand(N,1)
+
+ 
      parfor i=1:N   % parallel computing
        
         ans3=sprintf('step %d/%d',i,N)
-                                
+        rng(i)
+        checkrand=randi([100,10000],1);                        
         %Random seed:
-        rng(i*k+Randcheck(i,1)+100000,'twister') %for different seed in different stream
+        rng(k+i*checkrand+100000,'twister') %for different seed in different stream
         alpha=unifrnd(0,1)*2;
         beta=unifrnd(0,1)*2;
                   

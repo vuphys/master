@@ -73,7 +73,7 @@ for k=1:M
     A(1,3) = multissim(noise_img,GroTru); %Multi SSIM
     A(1,4) = psnrhvsm(noise_img, GroTru); %PSNR HVSM
     A(1,5) = psnrhma(noise_img,GroTru); %PSNR HMA
-    A(1,6) = vif(GroTru,noise_img); %VIF
+    A(1,6) = VIF_FR(GroTru,noise_img); %VIF
     A(1,7) = FeatureSIM(GroTru,noise_img); %FSIM
     
     result.I(k).noise_met=A;
@@ -81,13 +81,13 @@ for k=1:M
 
 %count=0;
 format long;
-rng('shuffle')
- Randcheck=rand(N,1)
 
 
      parfor i=1:N % parallel computing
         % Random seed:
-        rng(i*k+Randcheck(i,1)+400000,'twister') %for different seed in different stream
+        rng(i)
+        checkrand=randi([1000,1000000],1);  
+        rng(k+i*checkrand+4000000,'twister') %for different seed in different stream
         alpha1=unifrnd(0,1)*2; %should divide for 100
         alpha0=unifrnd(0,1)*2;    %should divide for 100
         
@@ -116,7 +116,7 @@ rng('shuffle')
         psnr_tgv = psnr(denoise_img,GroTru);
         
         %VIF
-        vif_val=vif(GroTru,denoise_img);
+        vif_val=VIF_FR(GroTru,denoise_img);
         
         %FSIM
         fsim=FeatureSIM(GroTru,denoise_img);
