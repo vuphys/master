@@ -1,5 +1,5 @@
 # Master Project
-Master Project University of Aberdeen
+Master Project in Medical Physics at the University of Aberdeen
 
 "Applying and optimising Total Generalised Variation filtering for FFC-MRI images"
 Hoang Vu Nguyen
