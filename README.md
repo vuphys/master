@@ -9,6 +9,8 @@ Supervisor: Dr. Lionel Broche
 
 For lastest simulation, please check "monte_sim_x_all" with "x" is the name of the algorithms (e.g., condat)
 
+The "auto TGV" program, which can be used for denoising FFC MRI images automatically, can be found in Auto TGV folder.
+
 All data are stored in DATA
 
 I would be glad to receive any comment or suggestion.
